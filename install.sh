@@ -32,7 +32,7 @@ www=$1
 user=$2
 group=$3
 
-openvpn_admin="$www/openvpn-admin"
+openvpn_admin="$www/html/openvpn-admin"
 
 # Check the validity of the arguments
 if [ ! -d "$www" ] ||  ! grep -q "$user" "/etc/passwd" || ! grep -q "$group" "/etc/group" ; then
@@ -117,11 +117,20 @@ read -p "Common Name (eg, your name or your server's hostname) [ChangeMe]: " key
 printf "\n################## Creating the certificates ##################\n"
 
 # Get the rsa keys
-wget "https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.6/EasyRSA-unix-v3.0.6.tgz"
-tar -xaf "EasyRSA-unix-v3.0.6.tgz"
-mv "EasyRSA-v3.0.6" /etc/openvpn/easy-rsa
-rm "EasyRSA-unix-v3.0.6.tgz"
+EASYRSA_RELEASES=( $(
+  curl -s https://api.github.com/repos/OpenVPN/easy-rsa/releases | \
+  grep 'tag_name' | \
+  grep -E '3(\.[0-9]+)+' | \
+  awk '{ print $2 }' | \
+  sed 's/[,|"|v]//g'
+) )
+EASYRSA_LATEST=${EASYRSA_RELEASES[0]}
 
+# Get the rsa keys
+wget -q https://github.com/OpenVPN/easy-rsa/releases/download/v${EASYRSA_LATEST}/EasyRSA-${EASYRSA_LATEST}.tgz
+tar -xaf EasyRSA-${EASYRSA_LATEST}.tgz
+mv EasyRSA-${EASYRSA_LATEST} /etc/openvpn/easy-rsa
+rm -r EasyRSA-${EASYRSA_LATEST}.tgz
 cd /etc/openvpn/easy-rsa
 
 if [[ ! -z $key_size ]]; then
