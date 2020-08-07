@@ -61,7 +61,7 @@ Only tested on Debian Jessie. Feel free to open issues.
   * Setup OpenVPN and the web application:
 
         $ cd ~/my_coding_workspace
-        $ git clone https://github.com/Chocobozzz/OpenVPN-Admin openvpn-admin
+        $ git clone https://github.com/atong27/OpenVPN-Admin openvpn-admin
         $ cd openvpn-admin
         # ./install.sh /var/www www-data www-data
 
